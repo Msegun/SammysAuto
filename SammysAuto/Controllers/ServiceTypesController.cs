@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SammysAuto.Data;
 using SammysAuto.Models;
+using SammysAuto.Utility;
 
 namespace SammysAuto.Controllers
 {
+    [Authorize(Roles = SD.AdminEndUser)]
     public class ServiceTypesController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -19,9 +22,17 @@ namespace SammysAuto.Controllers
         }
 
         //GET : ServiceTypes
-        public IActionResult Index()
+        //public IActionResult Index()
+        //{
+        //    return View(_db.ServiceTypes.ToList());
+        //}
+
+        //GET : ServiceTypes with LINQ
+        public async Task<IActionResult> Index()
         {
-            return View(_db.ServiceTypes.ToList());
+            var serviceTypes = from s in _db.ServiceTypes select s;
+
+            return View(await serviceTypes.ToListAsync());
         }
 
         //GET: ServiceTypes/Create
